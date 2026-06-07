@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>지급 정산서</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:"Noto Sans KR",Arial,sans-serif;
+  background:#f2eee8;
+  color:#222;
+}
+
+.wrap{
+  max-width:900px;
+  margin:0 auto;
+  padding:24px;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:13px 18px;
+  font-weight:900;
+  cursor:pointer;
+  background:#8b5b2b;
+  color:white;
+}
+
+button.sub{
+  background:#444;
+}
+
+.paper{
+  background:white;
+  padding:40px;
+  border-radius:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+.header{
+  text-align:center;
+  border-bottom:3px solid #333;
+  padding-bottom:18px;
+  margin-bottom:24px;
+}
+
+.header h1{
+  margin:0;
+  font-size:34px;
+  letter-spacing:4px;
+}
+
+.meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px 30px;
+  margin-bottom:24px;
+  font-size:15px;
+}
+
+.meta div{
+  border-bottom:1px solid #ddd;
+  padding:8px 0;
+}
+
+.meta strong{
+  display:inline-block;
+  width:100px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:16px;
+}
+
+th,td{
+  border:1px solid #333;
+  padding:10px;
+  font-size:15px;
+}
+
+th{
+  background:#f1e7d8;
+}
+
+td.amount{
+  text-align:right;
+}
+
+.section{
+  background:#f8efe2;
+  font-weight:900;
+}
+
+.subtotal{
+  background:#fff3cd;
+  font-weight:900;
+}
+
+.payment{
+  background:#e8f5ee;
+  font-weight:900;
+  font-size:18px;
+}
+
+.memo{
+  min-height:70px;
+  border:1px solid #333;
+  padding:12px;
+  margin-top:12px;
+  line-height:1.6;
+}
+
+.sign{
+  margin-top:40px;
+  text-align:right;
+  line-height:2;
+}
+
+@media print{
+  body{background:white}
+  .wrap{max-width:none;padding:0}
+  .paper{box-shadow:none;border-radius:0;padding:20px}
+  .actions{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <div class="actions">
+    <button onclick="window.print()">PDF / 인쇄</button>
+    <button class="sub" onclick="history.back()">뒤로가기</button>
+  </div>
+
+  <div class="paper">
+
+    <div class="header">
+      <h1>지급 정산서</h1>
+    </div>
+
+    <div class="meta">
+      <div><strong>정산월</strong> <span id="month"></span></div>
+      <div><strong>브랜드</strong> <span id="brand"></span></div>
+      <div><strong>점포명</strong> <span id="storeName"></span></div>
+      <div><strong>상권</strong> <span id="market"></span></div>
+      <div><strong>지역</strong> <span id="region"></span></div>
+      <div><strong>지급상태</strong> <span id="paymentStatus"></span></div>
+      <div><strong>지급일</strong> <span id="paymentDate"></span></div>
+      <div><strong>정산ID</strong> <span id="settlementId"></span></div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>금액</th>
+          <th>비고</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr class="section">
+          <td colspan="3">1. 총 매출내역</td>
+        </tr>
+
+        <tr>
+          <td>총매출</td>
+          <td class="amount" id="sales"></td>
+          <td></td>
+        </tr>
+
+        <tr class="section">
+          <td colspan="3">2. 백화점수수료</td>
+        </tr>
+
+        <tr>
+          <td id="commissionLabel">백화점 수수료</td>
+          <td class="amount" id="commissionAmount"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>전기료 / 직·간접비 등</td>
+          <td class="amount" id="utilityCost"></td>
+          <td>상세내역 공제내역서 참조</td>
+        </tr>
+
+        <tr class="subtotal">
+          <td>백화점수수료 소계</td>
+          <td class="amount" id="departmentSubtotal"></td>
+          <td></td>
+        </tr>
+
+        <tr class="section">
+          <td colspan="3">3. 관리비 / 로열티</td>
+        </tr>
+
+        <tr>
+          <td id="hqFeeLabel">본사관리비</td>
+          <td class="amount" id="hqFeeAmount"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td id="royaltyLabel">국가유산진흥원 로열티</td>
+          <td class="amount" id="royaltyAmount"></td>
+          <td></td>
+        </tr>
+
+        <tr class="subtotal">
+          <td>관리비 / 로열티 소계</td>
+          <td class="amount" id="royaltySubtotal"></td>
+          <td></td>
+        </tr>
+
+        <tr class="section">
+          <td colspan="3">4. 원재료비</td>
+        </tr>
+
+        <tr>
+          <td>본사 청구 / 대행구매</td>
+          <td class="amount" id="hqPurchaseCost"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>MAC / 엠에이씨컴퍼니</td>
+          <td class="amount" id="macCost"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>롯데칠성</td>
+          <td class="amount" id="lotteCost"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>CJ</td>
+          <td class="amount" id="cjCost"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>기타 원재료</td>
+          <td class="amount" id="etcFoodCost"></td>
+          <td></td>
+        </tr>
+
+        <tr class="subtotal">
+          <td>원재료비 소계</td>
+          <td class="amount" id="foodSubtotal"></td>
+          <td></td>
+        </tr>
+
+        <tr class="section">
+          <td colspan="3">5. 경비 & 공과금</td>
+        </tr>
+
+        <tr>
+          <td>법인결산조정료</td>
+          <td class="amount" id="closingFee"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>기타경비</td>
+          <td class="amount" id="otherExpense"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>영업배상보험료 대납</td>
+          <td class="amount" id="insurancePremium"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>인건비</td>
+          <td class="amount" id="laborCost"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>4대보험</td>
+          <td class="amount" id="socialInsurance"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>카드수수료</td>
+          <td class="amount" id="cardFee"></td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td>기타공제</td>
+          <td class="amount" id="otherDeduction"></td>
+          <td></td>
+        </tr>
+
+        <tr class="subtotal">
+          <td>경비 & 공과금 소계</td>
+          <td class="amount" id="expenseSubtotal"></td>
+          <td></td>
+        </tr>
+
+        <tr class="subtotal">
+          <td>공제금액 합계</td>
+          <td class="amount" id="totalDeduction"></td>
+          <td></td>
+        </tr>
+
+        <tr class="payment">
+          <td>최종 지급액</td>
+          <td class="amount" id="paymentAmount"></td>
+          <td></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <h3>지급계좌</h3>
+    <div class="memo" id="bankAccount"></div>
+
+    <h3>비고</h3>
+    <div class="memo" id="memo"></div>
+
+    <div class="sign">
+      위와 같이 정산합니다.<br><br>
+      주식회사 더큰코리아
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const API_URL =
+"https://script.google.com/macros/s/AKfycbwg42OHYPkw8nv1X9vbuRNntXdw5isaVfXEEBzz_ya2W9uhTDTDEh4H4EnyFf2UfScXnw/exec";
+
+window.addEventListener("load", loadSettlement);
+
+async function loadSettlement(){
+
+  const params =
+    new URLSearchParams(location.search);
+
+  const id =
+    params.get("id");
+
+  if(!id){
+    alert("정산ID가 없습니다.");
+    return;
+  }
+
+  try{
+
+    const res =
+      await fetch(
+        API_URL +
+        "?action=getSettlement&id=" +
+        encodeURIComponent(id) +
+        "&t=" +
+        Date.now()
+      );
+
+    const data =
+      await res.json();
+
+    if(!data.success){
+      alert(data.message || "정산자료를 찾을 수 없습니다.");
+      return;
+    }
+
+    render(data.settlement);
+
+  }catch(e){
+
+    alert("정산서를 불러오지 못했습니다.");
+
+  }
+}
+
+function render(item){
+
+  setText("month", formatMonth(item.month));
+  setText("brand", item.brand);
+  setText("storeName", item.storeName);
+  setText("market", item.market);
+  setText("region", item.region);
+  setText("paymentStatus", item.paymentStatus);
+  setText(
+    "paymentDate",
+    item.paymentDate ||
+    (
+      item.paymentStatus === "지급완료"
+        ? today()
+        : "-"
+    )
+  );
+  setText("settlementId", item.id);
+
+  setText(
+    "commissionLabel",
+    ratePercent(item.commissionRate)
+      ? "백화점 수수료 (" + ratePercent(item.commissionRate) + ")"
+      : "백화점 수수료"
+  );
+
+  setText(
+    "hqFeeLabel",
+    ratePercent(item.hqFeeRate)
+      ? "본사관리비 (" + ratePercent(item.hqFeeRate) + ")"
+      : "본사관리비"
+  );
+
+  setText(
+    "royaltyLabel",
+    ratePercent(item.royaltyRate)
+      ? "국가유산진흥원 로열티 (" + ratePercent(item.royaltyRate) + ")"
+      : "국가유산진흥원 로열티"
+  );
+
+  setMoney("sales", item.sales);
+
+  setMoney("commissionAmount", item.commissionAmount);
+  setMoney("utilityCost", item.utilityCost);
+  setMoney("departmentSubtotal", item.departmentSubtotal);
+
+  setMoney("hqFeeAmount", item.hqFeeAmount);
+  setMoney("royaltyAmount", item.royaltyAmount);
+  setMoney("royaltySubtotal", item.royaltySubtotal);
+
+  setMoney("hqPurchaseCost", item.hqPurchaseCost);
+  setMoney("macCost", item.macCost);
+  setMoney("lotteCost", item.lotteCost);
+  setMoney("cjCost", item.cjCost);
+  setMoney("etcFoodCost", item.etcFoodCost);
+  setMoney("foodSubtotal", item.foodSubtotal);
+
+  setMoney("closingFee", item.closingFee);
+  setMoney("otherExpense", item.otherExpense);
+  setMoney("insurancePremium", item.insurancePremium);
+  setMoney("laborCost", item.laborCost);
+  setMoney("socialInsurance", item.socialInsurance);
+  setMoney("cardFee", item.cardFee);
+  setMoney("otherDeduction", item.otherDeduction);
+  setMoney("expenseSubtotal", item.expenseSubtotal);
+
+  setMoney("totalDeduction", item.totalDeduction);
+  setMoney("paymentAmount", item.paymentAmount);
+
+  setText("bankAccount", item.bankAccount || "-");
+  setText("memo", item.memo || "-");
+}
+
+function setText(id,text){
+  document.getElementById(id).textContent =
+    text || "";
+}
+
+function setMoney(id,value){
+  document.getElementById(id).textContent =
+    money(value) + " 원";
+}
+
+function money(value){
+  return Math.round(
+    Number(value || 0)
+  ).toLocaleString("ko-KR");
+}
+
+function formatMonth(value){
+  if(!value) return "";
+
+  const text = String(value);
+
+  if(text.length >= 7){
+    return text.slice(0,7);
+  }
+
+  return text;
+}
+
+function ratePercent(value){
+  const n = Number(value || 0);
+  if(!n) return "";
+  return (n * 100).toString().replace(/\.0$/, "") + "%";
+}
+
+function today(){
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return yyyy + "-" + mm + "-" + dd;
+}
+</script>
+
+</body>
+</html>

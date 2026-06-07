@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>점포별 월정산 입력</title>
+
+<link rel="stylesheet" href="settlement.css">
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>점포별 월정산 입력</h1>
+    <p>점포별 정산내역을 입력하고 최종 지급액을 자동 계산합니다.</p>
+  </div>
+
+  <div class="card">
+    <h2>기본 정보</h2>
+    <div class="grid">
+      <div>
+        <label>정산월</label>
+        <input id="month" type="month">
+      </div>
+
+      <div>
+        <label>점포 선택</label>
+        <select id="storeSelect" onchange="applyStoreInfo()">
+          <option value="">점포를 선택하세요</option>
+        </select>
+      </div>
+
+      <div>
+        <label>브랜드</label>
+        <input id="brand" readonly>
+      </div>
+
+      <div>
+        <label>백화점/상권</label>
+        <input id="market" readonly>
+      </div>
+
+      <div>
+        <label>지역</label>
+        <input id="region" readonly>
+      </div>
+
+      <div>
+        <label>지급상태</label>
+        <select id="paymentStatus">
+          <option>미지급</option>
+          <option>지급완료</option>
+          <option>보류</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>1. 총 매출내역</h2>
+    <div class="grid">
+      <div>
+        <label>총매출</label>
+        <input id="sales" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();" placeholder="예: 340000000">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2. 백화점수수료</h2>
+    <div class="grid">
+      <div>
+        <label>백화점 수수료율 (%)</label>
+        <input id="commissionRate" type="text" inputmode="decimal" onblur="formatRateInput(this); calculate();" placeholder="예: 12">
+      </div>
+
+      <div>
+        <label>백화점 수수료</label>
+        <input id="commissionAmount" readonly>
+      </div>
+
+      <div>
+        <label>전기료 / 직·간접비 등</label>
+        <input id="utilityCost" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>백화점수수료 소계</label>
+        <input id="departmentSubtotal" class="subtotal" readonly>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. 관리비 / 로열티</h2>
+    <div class="grid">
+      <div>
+        <label>본사관리비율 (%)</label>
+        <input id="hqFeeRate" type="text" inputmode="decimal" onblur="formatRateInput(this); calculate();" placeholder="예: 4">
+      </div>
+
+      <div>
+        <label>본사관리비</label>
+        <input id="hqFeeAmount" readonly>
+      </div>
+
+      <div>
+        <label>국가유산진흥원 로열티율 (%)</label>
+        <input id="royaltyRate" type="text" inputmode="decimal" onblur="formatRateInput(this); calculate();" placeholder="예: 3">
+      </div>
+
+      <div>
+        <label>국가유산진흥원 로열티</label>
+        <input id="royaltyAmount" readonly>
+      </div>
+
+      <div class="full">
+        <label>관리비 / 로열티 소계</label>
+        <input id="royaltySubtotal" class="subtotal" readonly>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4. 원재료비</h2>
+    <div class="grid">
+      <div>
+        <label>본사 청구 / 대행구매</label>
+        <input id="hqPurchaseCost" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>MAC / 엠에이씨컴퍼니</label>
+        <input id="macCost" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>롯데칠성</label>
+        <input id="lotteCost" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>CJ</label>
+        <input id="cjCost" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>기타 원재료</label>
+        <input id="etcFoodCost" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>원재료비 소계</label>
+        <input id="foodSubtotal" class="subtotal" readonly>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>5. 경비 & 공과금</h2>
+    <div class="grid">
+      <div>
+        <label>법인결산조정료</label>
+        <input id="closingFee" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>기타경비</label>
+        <input id="otherExpense" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>영업배상보험료 대납</label>
+        <input id="insurancePremium" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>인건비</label>
+        <input id="laborCost" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>4대보험</label>
+        <input id="socialInsurance" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>카드수수료</label>
+        <input id="cardFee" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>기타공제</label>
+        <input id="otherDeduction" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
+      </div>
+
+      <div>
+        <label>경비 & 공과금 소계</label>
+        <input id="expenseSubtotal" class="subtotal" readonly>
+      </div>
+
+      <div>
+        <label>지급일</label>
+        <input id="paymentDate" type="date">
+      </div>
+
+      <div>
+        <label>지급계좌</label>
+        <input id="bankAccount" placeholder="예: 하나 602-910043-80104">
+      </div>
+
+      <div class="full">
+        <label>비고</label>
+        <textarea id="memo" placeholder="특이사항을 입력하세요."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+
+  <h2>6. 첨부파일</h2>
+
+  <div class="upload-box">
+
+    <h3>정산첨부 통합파일</h3>
+
+    <input
+      type="file"
+      id="settlementFile"
+      accept=".xlsx,.xls,.pdf">
+
+    <p class="guide">
+      공제내역서 / 거래처원장 / MAC / 롯데칠성 등을
+      하나의 엑셀파일 시트로 업로드합니다.
+    </p>
+
+  </div>
+
+</div>
+
+  <div class="card">
+    <h2>자동 계산 결과</h2>
+    <div class="summary">
+      <div class="box">
+        <span>월 매출 합계</span>
+        <strong id="sumSales">0</strong>
+      </div>
+      <div class="box minus">
+        <span>공제금액 합계</span>
+        <strong id="sumDeduction">0</strong>
+      </div>
+      <div class="box plus">
+        <span>최종 지급액</span>
+        <strong id="sumPayment">0</strong>
+      </div>
+      <div class="box">
+        <span>정산 후 잔액</span>
+        <strong id="sumRemain">0</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <button onclick="saveSettlement()">정산 저장하기</button>
+    <div id="msg" class="msg"></div>
+    <div id="linkArea"></div>
+  </div>
+
+</div>
+
+
+
+<script src="settlement.js"></script>
+
+</body>
+</html>
