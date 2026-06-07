@@ -476,11 +476,17 @@ function render(list){
 
         <td class="left">
           <a
-            class="btn sub"
-            href="settlement-print.html?id=${encodeURIComponent(item.id)}"
-            target="_blank">
-            정산서
-          </a>
+  class="btn sub"
+  href="settlement-print.html?id=${encodeURIComponent(item.id)}"
+  target="_blank">
+  정산서
+</a>
+
+<button
+  class="btn gray"
+  onclick="copyPrintLink('${item.id}')">
+  링크복사
+</button>
         </td>
       </tr>
       `;
@@ -592,6 +598,17 @@ function safe(value){
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;");
+}
+
+function copyPrintLink(id){
+
+  const url =
+    "https://thebigkorea.github.io/thebigkorea-settlement/settlement-print.html?id=" +
+    encodeURIComponent(id);
+
+  navigator.clipboard.writeText(url).then(function(){
+    alert("정산서 링크가 복사되었습니다.");
+  });
 }
 </script>
 
