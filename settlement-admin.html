@@ -214,11 +214,26 @@ td.left{
       onchange="applyFilter()">
 
     <select id="statusFilter" onchange="applyFilter()">
-      <option value="">전체 지급상태</option>
-      <option>미지급</option>
-      <option>지급완료</option>
-      <option>보류</option>
-    </select>
+  <option value="active" selected>
+    진행중 정산
+  </option>
+
+  <option value="지급완료">
+    지급완료 보관함
+  </option>
+
+  <option value="">
+    전체 지급상태
+  </option>
+
+  <option value="미지급">
+    미지급
+  </option>
+
+  <option value="보류">
+    보류
+  </option>
+</select>
   </div>
 
   <div class="summary">
@@ -298,9 +313,9 @@ async function loadSettlements(){
       await res.json();
 
     ALL_LIST =
-      data.list || [];
+  data.list || [];
 
-    render(ALL_LIST);
+applyFilter();
 
   }catch(e){
 
@@ -347,10 +362,19 @@ function applyFilter(){
       list.filter(item => item.month === month);
   }
 
-  if(status){
-    list =
-      list.filter(item => item.paymentStatus === status);
-  }
+  if(status === "active"){
+
+  list = list.filter(item =>
+    item.paymentStatus !== "지급완료"
+  );
+
+}else if(status){
+
+  list = list.filter(item =>
+    item.paymentStatus === status
+  );
+
+}
 
   render(list);
 }
