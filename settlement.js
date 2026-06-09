@@ -94,8 +94,6 @@ const isDongtan =
 const isTheBigSoba =
   storeName.includes("더큰식탁과 소바공방");
 
-let commissionAmount = 0;
-
 if(isDongtan){
 
   const taxSales = num("taxSales");
@@ -103,20 +101,24 @@ if(isDongtan){
 
   sales = taxSales + taxFreeSales;
 
-  commissionAmount =
-    (taxSales * 0.15) +
-    (taxFreeSales * 0.15 * 1.1);
-
   setVal("sales", money(sales));
-
-}else{
-
-  commissionAmount =
-    sales * rate("commissionRate");
-
 }
-  const utilityCost = num("utilityCost");
-  const departmentSubtotal = commissionAmount + utilityCost;
+
+const commissionAmount =
+  num("commissionAmount");
+
+const posFee =
+  num("posFee");
+
+const taxAmount =
+  num("taxAmount");
+
+const departmentSubtotal =
+  commissionAmount +
+  posFee +
+  taxAmount;
+
+  
 
   let hqFeeAmount = 0;
 
@@ -197,7 +199,8 @@ async function saveSettlement(){
     sales:String(num("sales")),
     commissionRate:String(rate("commissionRate")),
     commissionAmount:String(numText("commissionAmount")),
-    utilityCost:String(num("utilityCost")),
+    posFee:String(num("posFee")),
+    taxAmount:String(num("taxAmount")),
     departmentSubtotal:String(numText("departmentSubtotal")),
     hqFeeRate:String(rate("hqFeeRate")),
     hqFeeAmount:String(numText("hqFeeAmount")),

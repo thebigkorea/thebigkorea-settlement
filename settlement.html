@@ -90,23 +90,36 @@
     <h2>2. 백화점수수료</h2>
     <div class="grid">
       <div>
-        <label>백화점 수수료율 (%)</label>
-        <input id="commissionRate" type="text" inputmode="decimal" onblur="formatRateInput(this); calculate();" placeholder="예: 12">
-      </div>
+        <div>
+  <label>백화점 수수료</label>
+  <input id="commissionAmount"
+    type="text"
+    inputmode="numeric"
+    onblur="formatMoneyInput(this); calculate();">
+</div>
 
-      <div>
-        <label>백화점 수수료</label>
-        <input id="commissionAmount" readonly>
-      </div>
+<div>
+  <label>POS사용료 외</label>
+  <input id="posFee"
+    type="text"
+    inputmode="numeric"
+    onblur="formatMoneyInput(this); calculate();">
+</div>
 
-      <div>
-        <label>전기료 / 직·간접비 등</label>
-        <input id="utilityCost" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();">
-      </div>
+<div>
+  <label>세액</label>
+  <input id="taxAmount"
+    type="text"
+    inputmode="numeric"
+    onblur="formatMoneyInput(this); calculate();">
+</div>
 
-      <div>
-        <label>백화점수수료 소계</label>
-        <input id="departmentSubtotal" class="subtotal" readonly>
+<div>
+  <label>백화점수수료 소계</label>
+  <input id="departmentSubtotal"
+    class="subtotal"
+    readonly>
+</div>
       </div>
     </div>
   </div>
