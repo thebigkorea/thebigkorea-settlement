@@ -122,10 +122,12 @@ async function saveSettlement(){
   const store = STORE_LIST[Number(storeIdx)];
   const attachments = await readAllAttachments();
 
+  const settlementMonth = val("month").slice(0, 7);
+
   const payload = {
     action:"saveSettlement",
-    month:val("month"),
-    periodText:val("month"),
+    month:settlementMonth,
+    periodText:settlementMonth,
     brand:store.brand,
     storeName:store.storeName,
     market:store.market,
