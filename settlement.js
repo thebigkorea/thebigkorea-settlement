@@ -120,14 +120,11 @@ if(isDongtan){
 
   let hqFeeAmount = 0;
 
-  if(isTheBigSoba){
-    hqFeeAmount = 400000;
-    setVal("hqFeeAmount", money(hqFeeAmount));
-  }else{
-    hqFeeAmount =
-      numText("hqFeeAmount") ||
-      roundup10(sales * rate("hqFeeRate"));
-  }
+if(isTheBigSoba){
+  hqFeeAmount = 400000;
+}else{
+  hqFeeAmount = roundup10(sales * rate("hqFeeRate"));
+}
   const royaltyAmount = roundup10(sales * rate("royaltyRate"));
   const royaltySubtotal = hqFeeAmount + royaltyAmount;
 
