@@ -107,6 +107,21 @@ function applyStoreInfo(){
   document.getElementById("taxFreeSalesBox").style.display =
     isDongtan ? "block" : "none";
 
+  document.getElementById("commissionRateBox").style.display =
+  isShinsegaeSoba ? "none" : "block";
+
+document.getElementById("utilityCostBox").style.display =
+  isShinsegaeSoba ? "none" : "block";
+
+document.getElementById("shinsegaePosBox").style.display =
+  isShinsegaeSoba ? "block" : "none";
+
+document.getElementById("shinsegaeTaxBox").style.display =
+  isShinsegaeSoba ? "block" : "none";
+
+document.getElementById("commissionAmount").readOnly =
+  !isShinsegaeSoba;  
+
   if(isDongtan){
 
     document.getElementById("commissionRate").value =
