@@ -52,17 +52,82 @@ function applyStoreInfo(){
   document.getElementById("hqFeeRate").value = percentDisplay(store.hqFeeRate);
   document.getElementById("royaltyRate").value = percentDisplay(store.royaltyRate);
 
+  const storeName = store.storeName || "";
+
+  const isDongtan =
+    storeName.includes("동탄");
+
+  const isTheBigSoba =
+    storeName.includes("더큰식탁과 소바공방");
+
+  document.getElementById("taxSalesBox").style.display =
+    isDongtan ? "block" : "none";
+
+  document.getElementById("taxFreeSalesBox").style.display =
+    isDongtan ? "block" : "none";
+
+  if(isDongtan){
+    document.getElementById("commissionRate").value = "15";
+  }
+
+  if(isTheBigSoba){
+    document.getElementById("hqFeeRate").value = "";
+    document.getElementById("hqFeeAmount").value = "400,000";
+  }
+
   calculate();
 }
 
 function calculate(){
-  const sales = num("sales");
+  let sales = num("sales");
 
-  const commissionAmount = sales * rate("commissionRate");
+const storeIdx = document.getElementById("storeSelect").value;
+const store =
+  storeIdx === "" ? null : STORE_LIST[Number(storeIdx)];
+
+const storeName =
+  store ? store.storeName || "" : "";
+
+const isDongtan =
+  storeName.includes("동탄");
+
+const isTheBigSoba =
+  storeName.includes("더큰식탁과 소바공방");
+
+let commissionAmount = 0;
+
+if(isDongtan){
+
+  const taxSales = num("taxSales");
+  const taxFreeSales = num("taxFreeSales");
+
+  sales = taxSales + taxFreeSales;
+
+  commissionAmount =
+    (taxSales * 0.15) +
+    (taxFreeSales * 0.15 * 1.1);
+
+  setVal("sales", money(sales));
+
+}else{
+
+  commissionAmount =
+    sales * rate("commissionRate");
+
+}
   const utilityCost = num("utilityCost");
   const departmentSubtotal = commissionAmount + utilityCost;
 
-  const hqFeeAmount = roundup10(sales * rate("hqFeeRate"));
+  let hqFeeAmount = 0;
+
+  if(isTheBigSoba){
+    hqFeeAmount = 400000;
+    setVal("hqFeeAmount", money(hqFeeAmount));
+  }else{
+    hqFeeAmount =
+      numText("hqFeeAmount") ||
+      roundup10(sales * rate("hqFeeRate"));
+  }
   const royaltyAmount = roundup10(sales * rate("royaltyRate"));
   const royaltySubtotal = hqFeeAmount + royaltyAmount;
 
@@ -160,7 +225,14 @@ async function saveSettlement(){
     paymentStatus:val("paymentStatus"),
     paymentDate:val("paymentDate"),
     bankAccount:val("bankAccount"),
-    memo:val("memo"),
+    memo:
+  val("memo") +
+  (
+    document.getElementById("taxSalesBox").style.display !== "none"
+      ? "\n과세매출: " + money(num("taxSales")) +
+        "\n면세매출: " + money(num("taxFreeSales"))
+      : ""
+  ),
     settlementFile:attachments.settlementFile
   };
 

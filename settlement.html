@@ -58,14 +58,33 @@
   </div>
 
   <div class="card">
-    <h2>1. 총 매출내역</h2>
-    <div class="grid">
-      <div>
-        <label>총매출</label>
-        <input id="sales" type="text" inputmode="numeric" onblur="formatMoneyInput(this); calculate();" placeholder="예: 340000000">
-      </div>
+  <h2>1. 총 매출내역</h2>
+
+  <div class="grid">
+
+    <div>
+      <label>총매출</label>
+      <input id="sales" type="text" inputmode="numeric"
+        onblur="formatMoneyInput(this); calculate();"
+        placeholder="예: 340000000">
     </div>
+
+    <div id="taxSalesBox" style="display:none;">
+      <label>과세매출</label>
+      <input id="taxSales" type="text" inputmode="numeric"
+        onblur="formatMoneyInput(this); calculate();"
+        placeholder="예: 300000000">
+    </div>
+
+    <div id="taxFreeSalesBox" style="display:none;">
+      <label>면세매출</label>
+      <input id="taxFreeSales" type="text" inputmode="numeric"
+        onblur="formatMoneyInput(this); calculate();"
+        placeholder="예: 40000000">
+    </div>
+
   </div>
+</div>
 
   <div class="card">
     <h2>2. 백화점수수료</h2>
@@ -102,7 +121,8 @@
 
       <div>
         <label>본사관리비</label>
-        <input id="hqFeeAmount" readonly>
+        <input id="hqFeeAmount" type="text" inputmode="numeric"
+          onblur="formatMoneyInput(this); calculate();">
       </div>
 
       <div>
