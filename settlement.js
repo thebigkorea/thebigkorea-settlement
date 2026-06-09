@@ -90,16 +90,33 @@ function calculate(){
   const isTheBigSoba = storeName.includes("더큰식탁과 소바공방");
   const isShinsegaeSoba = storeName.includes("소바공방 시흥신세계프리미엄아울렛점");
 
-  if(isDongtan){
-    const taxSales = num("taxSales");
-    const taxFreeSales = num("taxFreeSales");
-    sales = taxSales + taxFreeSales;
-    setVal("sales", money(sales));
-  }
-
   let commissionAmount = 0;
-  let departmentSubtotal = 0;
+let departmentSubtotal = 0;
 
+if(isDongtan){
+
+  const taxSales = num("taxSales");
+  const taxFreeSales = num("taxFreeSales");
+
+  sales = taxSales + taxFreeSales;
+
+  const taxCommission =
+    taxSales * 0.15;
+
+  const taxFreeCommission =
+    taxFreeSales * 0.15 * 1.1;
+
+  commissionAmount =
+    taxCommission + taxFreeCommission;
+
+  setVal("sales", money(sales));
+
+}else{
+
+  commissionAmount =
+    sales * rate("commissionRate");
+
+}
   if(isShinsegaeSoba){
     commissionAmount = num("commissionAmount");
 
