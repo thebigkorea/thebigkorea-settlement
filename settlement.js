@@ -43,6 +43,11 @@ function applyStoreInfo(){
   if(idx === "") return;
 
   const store = STORE_LIST[Number(idx)];
+  const storeName = store.storeName || "";
+
+  const isDongtan = storeName.includes("동탄");
+  const isTheBigSoba = storeName.includes("더큰식탁과 소바공방");
+  const isShinsegaeSoba = storeName.includes("소바공방 시흥신세계프리미엄아울렛점");
 
   document.getElementById("brand").value = store.brand || "";
   document.getElementById("market").value = store.market || "";
@@ -52,19 +57,15 @@ function applyStoreInfo(){
   document.getElementById("hqFeeRate").value = percentDisplay(store.hqFeeRate);
   document.getElementById("royaltyRate").value = percentDisplay(store.royaltyRate);
 
-  const storeName = store.storeName || "";
+  document.getElementById("taxSalesBox").style.display = isDongtan ? "block" : "none";
+  document.getElementById("taxFreeSalesBox").style.display = isDongtan ? "block" : "none";
 
-  const isDongtan =
-    storeName.includes("동탄");
+  document.getElementById("commissionRateBox").style.display = isShinsegaeSoba ? "none" : "block";
+  document.getElementById("utilityCostBox").style.display = isShinsegaeSoba ? "none" : "block";
+  document.getElementById("shinsegaePosBox").style.display = isShinsegaeSoba ? "block" : "none";
+  document.getElementById("shinsegaeTaxBox").style.display = isShinsegaeSoba ? "block" : "none";
 
-  const isTheBigSoba =
-    storeName.includes("더큰식탁과 소바공방");
-
-  document.getElementById("taxSalesBox").style.display =
-    isDongtan ? "block" : "none";
-
-  document.getElementById("taxFreeSalesBox").style.display =
-    isDongtan ? "block" : "none";
+  document.getElementById("commissionAmount").readOnly = !isShinsegaeSoba;
 
   if(isDongtan){
     document.getElementById("commissionRate").value = "15";
@@ -81,52 +82,49 @@ function applyStoreInfo(){
 function calculate(){
   let sales = num("sales");
 
-const storeIdx = document.getElementById("storeSelect").value;
-const store =
-  storeIdx === "" ? null : STORE_LIST[Number(storeIdx)];
+  const storeIdx = document.getElementById("storeSelect").value;
+  const store = storeIdx === "" ? null : STORE_LIST[Number(storeIdx)];
+  const storeName = store ? store.storeName || "" : "";
 
-const storeName =
-  store ? store.storeName || "" : "";
+  const isDongtan = storeName.includes("동탄");
+  const isTheBigSoba = storeName.includes("더큰식탁과 소바공방");
+  const isShinsegaeSoba = storeName.includes("소바공방 시흥신세계프리미엄아울렛점");
 
-const isDongtan =
-  storeName.includes("동탄");
+  if(isDongtan){
+    const taxSales = num("taxSales");
+    const taxFreeSales = num("taxFreeSales");
+    sales = taxSales + taxFreeSales;
+    setVal("sales", money(sales));
+  }
 
-const isTheBigSoba =
-  storeName.includes("더큰식탁과 소바공방");
+  let commissionAmount = 0;
+  let departmentSubtotal = 0;
 
-if(isDongtan){
+  if(isShinsegaeSoba){
+    commissionAmount = num("commissionAmount");
 
-  const taxSales = num("taxSales");
-  const taxFreeSales = num("taxFreeSales");
+    const posFee = num("posFee");
+    const taxAmount = num("taxAmount");
 
-  sales = taxSales + taxFreeSales;
+    departmentSubtotal = commissionAmount + posFee + taxAmount;
 
-  setVal("sales", money(sales));
-}
+  }else{
+    commissionAmount = sales * rate("commissionRate");
 
-const commissionAmount =
-  num("commissionAmount");
+    const utilityCost = num("utilityCost");
+    departmentSubtotal = commissionAmount + utilityCost;
 
-const posFee =
-  num("posFee");
-
-const taxAmount =
-  num("taxAmount");
-
-const departmentSubtotal =
-  commissionAmount +
-  posFee +
-  taxAmount;
-
-  
+    setVal("commissionAmount", money(commissionAmount));
+  }
 
   let hqFeeAmount = 0;
 
-if(isTheBigSoba){
-  hqFeeAmount = 400000;
-}else{
-  hqFeeAmount = roundup10(sales * rate("hqFeeRate"));
-}
+  if(isTheBigSoba){
+    hqFeeAmount = 400000;
+  }else{
+    hqFeeAmount = roundup10(sales * rate("hqFeeRate"));
+  }
+
   const royaltyAmount = roundup10(sales * rate("royaltyRate"));
   const royaltySubtotal = hqFeeAmount + royaltyAmount;
 
@@ -154,7 +152,6 @@ if(isTheBigSoba){
 
   const payment = sales - totalDeduction;
 
-  setVal("commissionAmount", money(commissionAmount));
   setVal("departmentSubtotal", money(departmentSubtotal));
   setVal("hqFeeAmount", money(hqFeeAmount));
   setVal("royaltyAmount", money(royaltyAmount));
@@ -184,9 +181,23 @@ async function saveSettlement(){
   showMsg("정산자료와 첨부파일을 저장 중입니다.", "warn");
 
   const store = STORE_LIST[Number(storeIdx)];
-  const attachments = await readAllAttachments();
+  const storeName = store.storeName || "";
+  const isDongtan = storeName.includes("동탄");
+  const isShinsegaeSoba = storeName.includes("소바공방 시흥신세계프리미엄아울렛점");
 
+  const attachments = await readAllAttachments();
   const settlementMonth = val("month").slice(0, 7);
+
+  const memoText =
+    val("memo") +
+    (isDongtan
+      ? "\n과세매출: " + money(num("taxSales")) +
+        "\n면세매출: " + money(num("taxFreeSales"))
+      : "") +
+    (isShinsegaeSoba
+      ? "\nPOS사용료 외: " + money(num("posFee")) +
+        "\n세액: " + money(num("taxAmount"))
+      : "");
 
   const payload = {
     action:"saveSettlement",
@@ -199,8 +210,11 @@ async function saveSettlement(){
     sales:String(num("sales")),
     commissionRate:String(rate("commissionRate")),
     commissionAmount:String(numText("commissionAmount")),
-    posFee:String(num("posFee")),
-    taxAmount:String(num("taxAmount")),
+    utilityCost:String(
+      isShinsegaeSoba
+        ? num("posFee") + num("taxAmount")
+        : num("utilityCost")
+    ),
     departmentSubtotal:String(numText("departmentSubtotal")),
     hqFeeRate:String(rate("hqFeeRate")),
     hqFeeAmount:String(numText("hqFeeAmount")),
@@ -225,14 +239,7 @@ async function saveSettlement(){
     paymentStatus:val("paymentStatus"),
     paymentDate:val("paymentDate"),
     bankAccount:val("bankAccount"),
-    memo:
-  val("memo") +
-  (
-    document.getElementById("taxSalesBox").style.display !== "none"
-      ? "\n과세매출: " + money(num("taxSales")) +
-        "\n면세매출: " + money(num("taxFreeSales"))
-      : ""
-  ),
+    memo:memoText,
     settlementFile:attachments.settlementFile
   };
 
@@ -246,28 +253,25 @@ async function saveSettlement(){
 
     if(data.success){
       const printUrl =
-  "https://thebigkorea.github.io/thebigkorea-settlement/settlement-print.html?id=" +
-  encodeURIComponent(data.settlementId);
+        "https://thebigkorea.github.io/thebigkorea-settlement/settlement-print.html?id=" +
+        encodeURIComponent(data.settlementId);
 
-showMsg(
-  "정산 저장 완료 / 최종지급액: " +
-  money(data.paymentAmount),
-  "ok"
-);
+      showMsg(
+        "정산 저장 완료 / 최종지급액: " +
+        money(data.paymentAmount),
+        "ok"
+      );
 
-document.getElementById("linkArea").innerHTML = `
-  <button onclick="copySettlementLink('${printUrl}')">
-    정산서 링크 복사
-  </button>
+      document.getElementById("linkArea").innerHTML = `
+        <button onclick="copySettlementLink('${printUrl}')">
+          정산서 링크 복사
+        </button>
 
-  <a
-    href="${printUrl}"
-    target="_blank"
-    class="link-btn"
-  >
-    정산서 열기
-  </a>
-`;
+        <a href="${printUrl}" target="_blank" class="link-btn">
+          정산서 열기
+        </a>
+      `;
+
     }else{
       showMsg(data.message || "저장 실패", "warn");
     }
@@ -290,21 +294,6 @@ function readOneFile(id){
   if(!file) return Promise.resolve(null);
 
   return fileToObject(file);
-}
-
-async function readMultipleFiles(id){
-  const input = document.getElementById(id);
-  const files = Array.from(input.files || []);
-
-  if(!files.length) return [];
-
-  const list = [];
-
-  for(const file of files){
-    list.push(await fileToObject(file));
-  }
-
-  return list;
 }
 
 function fileToObject(file){
@@ -331,11 +320,13 @@ function fileToObject(file){
 }
 
 function val(id){
-  return document.getElementById(id).value.trim();
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : "";
 }
 
 function setVal(id,value){
-  document.getElementById(id).value = value;
+  const el = document.getElementById(id);
+  if(el) el.value = value;
 }
 
 function normalizeNumberText(text){
@@ -406,10 +397,9 @@ function showMsg(text,type){
   msg.textContent = text;
   msg.className = "msg " + type;
 }
-function copySettlementLink(url){
 
+function copySettlementLink(url){
   navigator.clipboard.writeText(url).then(function(){
     alert("정산서 링크가 복사되었습니다.");
   });
-
 }
