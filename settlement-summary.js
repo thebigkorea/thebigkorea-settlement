@@ -61,7 +61,7 @@ function renderSummary(rows){
 
   if(!rows.length){
     tbody.innerHTML =
-      `<tr><td colspan="9">조회된 자료가 없습니다.</td></tr>`;
+      `<tr><td colspan="14">조회된 자료가 없습니다.</td></tr>`;
     return;
   }
 
@@ -69,6 +69,11 @@ function renderSummary(rows){
   let totalCommission = 0;
   let totalHqFee = 0;
   let totalRoyalty = 0;
+  let totalHqPurchase = 0;
+  let totalMac = 0;
+  let totalLotte = 0;
+  let totalCj = 0;
+  let totalEtcFood = 0;
   let totalFood = 0;
   let totalExpense = 0;
   let totalDeduction = 0;
@@ -82,7 +87,14 @@ function renderSummary(rows){
     totalCommission += Number(row.commissionAmount || 0);
     totalHqFee += Number(row.hqFeeAmount || 0);
     totalRoyalty += Number(row.royaltyAmount || 0);
+
+    totalHqPurchase += Number(row.hqPurchaseCost || 0);
+    totalMac += Number(row.macCost || 0);
+    totalLotte += Number(row.lotteCost || 0);
+    totalCj += Number(row.cjCost || 0);
+    totalEtcFood += Number(row.etcFoodCost || 0);
     totalFood += Number(row.foodSubtotal || 0);
+
     totalExpense += Number(row.expenseSubtotal || 0);
     totalDeduction += Number(row.totalDeduction || 0);
     totalPayment += Number(row.paymentAmount || 0);
@@ -94,6 +106,11 @@ function renderSummary(rows){
         <td>${money(row.commissionAmount)}</td>
         <td>${money(row.hqFeeAmount)}</td>
         <td>${money(row.royaltyAmount)}</td>
+        <td>${money(row.hqPurchaseCost)}</td>
+        <td>${money(row.macCost)}</td>
+        <td>${money(row.lotteCost)}</td>
+        <td>${money(row.cjCost)}</td>
+        <td>${money(row.etcFoodCost)}</td>
         <td>${money(row.foodSubtotal)}</td>
         <td>${money(row.expenseSubtotal)}</td>
         <td>${money(row.totalDeduction)}</td>
@@ -109,6 +126,11 @@ function renderSummary(rows){
       <td>${money(totalCommission)}</td>
       <td>${money(totalHqFee)}</td>
       <td>${money(totalRoyalty)}</td>
+      <td>${money(totalHqPurchase)}</td>
+      <td>${money(totalMac)}</td>
+      <td>${money(totalLotte)}</td>
+      <td>${money(totalCj)}</td>
+      <td>${money(totalEtcFood)}</td>
       <td>${money(totalFood)}</td>
       <td>${money(totalExpense)}</td>
       <td>${money(totalDeduction)}</td>
