@@ -272,11 +272,9 @@ td.left{
           <th>지급상태</th>                    
           <th>총매출</th>
           <th>백화점수수료</th>
-          <th>전기료 등</th>
-          <th>백화점소계</th>
+          <th>전기료 등</th>          
           <th>본사관리비</th>
-          <th>로열티</th>
-          <th>관리/로열티 소계</th>
+          <th>로열티</th>          
           <th>원재료비</th>
           <th>경비공과금</th>
           <th>공제합계</th>
@@ -392,7 +390,7 @@ function render(list){
 
     tbody.innerHTML =
       `<tr>
-        <td colspan="16" style="text-align:center;padding:40px;">
+        <td colspan="14" style="text-align:center;padding:40px;">
           정산자료가 없습니다.
         </td>
       </tr>`;
@@ -438,18 +436,12 @@ function render(list){
 
         <td>${money(item.utilityCost)}</td>
 
-        <td>
-          <strong>${money(item.departmentSubtotal)}</strong>
-        </td>
-
+        
         <td>${money(item.hqFeeAmount)}</td>
 
         <td>${money(item.royaltyAmount)}</td>
 
-        <td>
-          <strong>${money(item.royaltySubtotal)}</strong>
-        </td>
-
+        
         <td>
           <strong>${money(item.foodSubtotal)}</strong>
         </td>
