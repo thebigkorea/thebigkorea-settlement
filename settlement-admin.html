@@ -17,9 +17,10 @@ body{
 }
 
 .wrap{
-  max-width:1500px;
+  width:calc(100vw - 32px);
+  max-width:none;
   margin:0 auto;
-  padding:20px;
+  padding:16px;
 }
 
 .header{
@@ -91,25 +92,30 @@ input,select{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:1700px;
+  table-layout:fixed;
 }
 
 th{
   background:#f1e7d8;
   color:#3a2517;
-  padding:13px;
-  font-size:13px;
+  padding:8px 6px;
+  font-size:12px;
   text-align:center;
   position:sticky;
   top:0;
 }
 
 td{
-  padding:10px;
+  padding:6px 5px;
   border-top:1px solid #eadfce;
-  font-size:13px;
+  font-size:12px;
   vertical-align:middle;
   text-align:right;
+}
+
+td,
+th{
+  white-space:nowrap;
 }
 
 td.left{
