@@ -119,20 +119,16 @@ function applyStoreInfo(){
   isManualCommission ? "none" : "block";
 
 /*
- * 시흥은 전기료 입력칸을 사용하지 않고,
- * 파주는 기존처럼 전기료·직간접비를 입력합니다.
+  * 시흥은 전기료 입력칸을 사용하지 않고,
  */
 document.getElementById("utilityCostBox").style.display =
-  isShinsegaeSoba ? "none" : "block";
+  isManualCommission ? "none" : "block";
 
-/*
- * POS사용료와 세액은 시흥점에만 표시합니다.
- */
 document.getElementById("shinsegaePosBox").style.display =
-  isShinsegaeSoba ? "block" : "none";
+  isManualCommission ? "block" : "none";
 
 document.getElementById("shinsegaeTaxBox").style.display =
-  isShinsegaeSoba ? "block" : "none";
+  isManualCommission ? "block" : "none";
 
 /*
  * 시흥과 파주는 백화점 수수료를 직접 입력합니다.
@@ -184,7 +180,11 @@ function calculate(){
 
   const isPajuShinsegae =
   storeName.includes("파주") &&
-  storeName.includes("신세계");  
+  storeName.includes("신세계");
+
+const isShinsegaeManual =
+  isShinsegaeSoba ||
+  isPajuShinsegae; 
 
   let commissionAmount = 0;
   let departmentSubtotal = 0;
@@ -220,8 +220,8 @@ function calculate(){
 
   }
 
-  // 시흥 신세계 소바공방
-  else if(isShinsegaeSoba){
+  // 시흥 소바공방 · 파주 효종갱 신세계
+  else if(isShinsegaeManual){
 
     commissionAmount =
       num("commissionAmount");
@@ -239,24 +239,7 @@ function calculate(){
 
   }
 
-  // 파주 신세계 효종갱
-else if(isPajuShinsegae){
-
-  /*
-   * 백화점 수수료는 실제 정산서 금액을 직접 입력합니다.
-   */
-  commissionAmount =
-    num("commissionAmount");
-
-  const utilityCost =
-    num("utilityCost");
-
-  departmentSubtotal =
-    commissionAmount +
-    utilityCost;
-
-}
-
+  
   // 일반 점포
   else{
 
