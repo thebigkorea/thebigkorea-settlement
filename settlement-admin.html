@@ -269,8 +269,7 @@ td.left{
         <tr>
           <th>정산월</th>          
           <th>점포명</th>
-          <th>지급상태</th>
-          <th>상권</th>          
+          <th>지급상태</th>                    
           <th>총매출</th>
           <th>백화점수수료</th>
           <th>전기료 등</th>
@@ -393,7 +392,7 @@ function render(list){
 
     tbody.innerHTML =
       `<tr>
-        <td colspan="17" style="text-align:center;padding:40px;">
+        <td colspan="16" style="text-align:center;padding:40px;">
           정산자료가 없습니다.
         </td>
       </tr>`;
@@ -432,8 +431,7 @@ function render(list){
           ${statusBadge(item.paymentStatus)}
         </td>
 
-        <td class="left">${safe(item.market)}</td>
-        
+                
         <td>${money(item.sales)}</td>
 
         <td>${money(item.commissionAmount)}</td>
