@@ -92,7 +92,6 @@ input,select{
 table{
   width:100%;
   border-collapse:collapse;
-  table-layout:fixed;
 }
 
 th{
@@ -268,12 +267,10 @@ td.left{
     <table>
       <thead>
         <tr>
-          <th>정산월</th>
-          <th>브랜드</th>
+          <th>정산월</th>          
           <th>점포명</th>
           <th>지급상태</th>
-          <th>상권</th>
-          <th>지역</th>
+          <th>상권</th>          
           <th>총매출</th>
           <th>백화점수수료</th>
           <th>전기료 등</th>
@@ -396,7 +393,7 @@ function render(list){
 
     tbody.innerHTML =
       `<tr>
-        <td colspan="19" style="text-align:center;padding:40px;">
+        <td colspan="17" style="text-align:center;padding:40px;">
           정산자료가 없습니다.
         </td>
       </tr>`;
@@ -411,8 +408,7 @@ function render(list){
       <tr>
         <td class="left">${item.month || ""}</td>
 
-        <td class="left">${safe(item.brand)}</td>
-
+        
         <td class="left">
           <strong>${safe(item.storeName)}</strong>
         </td>
@@ -437,8 +433,7 @@ function render(list){
         </td>
 
         <td class="left">${safe(item.market)}</td>
-        <td class="left">${safe(item.region)}</td>
-
+        
         <td>${money(item.sales)}</td>
 
         <td>${money(item.commissionAmount)}</td>
