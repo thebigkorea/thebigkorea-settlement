@@ -2,10 +2,13 @@ const API_URL =
 "https://script.google.com/macros/s/AKfycbwg42OHYPkw8nv1X9vbuRNntXdw5isaVfXEEBzz_ya2W9uhTDTDEh4H4EnyFf2UfScXnw/exec";
 
 let STORE_LIST = [];
+let EDIT_ID = "";
+let EDIT_DATA = null;
 
-window.addEventListener("load", function(){
+window.addEventListener("load", async function(){
   setDefaultMonth();
-  loadStores();
+  await loadStores();
+  await loadEditSettlement();
   calculate();
 });
 
@@ -60,6 +63,94 @@ async function loadStores(){
     );
 
   }
+}
+
+async function loadEditSettlement(){
+  const params = new URLSearchParams(window.location.search);
+  const id = String(params.get("editId") || "").trim();
+  if(!id) return;
+
+  try{
+    const res = await fetch(
+      API_URL + "?action=getSettlement&id=" + encodeURIComponent(id) + "&t=" + Date.now(),
+      {cache:"no-store"}
+    );
+    const data = await res.json();
+
+    if(!data || data.success !== true || !data.settlement){
+      showMsg((data && data.message) || "수정할 정산자료를 불러오지 못했습니다.","warn");
+      return;
+    }
+
+    EDIT_ID = id;
+    EDIT_DATA = data.settlement;
+    fillEditForm(EDIT_DATA);
+    setEditModeUI();
+  }catch(e){
+    console.error(e);
+    showMsg("수정할 정산자료를 불러오지 못했습니다.","warn");
+  }
+}
+
+function fillEditForm(item){
+  setVal("month", String(item.month || "").slice(0,7));
+
+  const storeIndex = STORE_LIST.findIndex(function(store){
+    return String(store.storeName || "").trim() === String(item.storeName || "").trim();
+  });
+
+  if(storeIndex >= 0){
+    setVal("storeSelect", String(storeIndex));
+    applyStoreInfo();
+  }else{
+    setVal("brand", item.brand || "");
+    setVal("market", item.market || "");
+    setVal("region", item.region || "");
+  }
+
+  setVal("sales", money(item.sales));
+  setVal("commissionRate", percentDisplay(item.commissionRate));
+  setVal("commissionAmount", money(item.commissionAmount));
+  setVal("utilityCost", money(item.utilityCost));
+  setVal("departmentSubtotal", money(item.departmentSubtotal));
+  setVal("hqFeeRate", percentDisplay(item.hqFeeRate));
+  setVal("hqFeeAmount", money(item.hqFeeAmount));
+  setVal("royaltyRate", percentDisplay(item.royaltyRate));
+  setVal("royaltyAmount", money(item.royaltyAmount));
+  setVal("royaltySubtotal", money(item.royaltySubtotal));
+  setVal("hqPurchaseCost", money(item.hqPurchaseCost));
+  setVal("macCost", money(item.macCost));
+  setVal("lotteCost", money(item.lotteCost));
+  setVal("cjCost", money(item.cjCost));
+  setVal("etcFoodCost", money(item.etcFoodCost));
+  setVal("foodSubtotal", money(item.foodSubtotal));
+  setVal("closingFee", money(item.closingFee));
+  setVal("otherExpense", money(item.otherExpense));
+  setVal("insurancePremium", money(item.insurancePremium));
+  setVal("laborCost", money(item.laborCost));
+  setVal("socialInsurance", money(item.socialInsurance));
+  setVal("cardFee", money(item.cardFee));
+  setVal("otherDeduction", money(item.otherDeduction));
+  setVal("expenseSubtotal", money(item.expenseSubtotal));
+  setVal("paymentStatus", item.paymentStatus || "미지급");
+  setVal("paymentDate", item.paymentDate || "");
+  setVal("bankAccount", item.bankAccount || "");
+  setVal("memo", item.memo || "");
+
+  calculate();
+}
+
+function setEditModeUI(){
+  const btn = document.getElementById("saveSettlementBtn");
+  if(btn){
+    btn.textContent = "정산 수정저장";
+    btn.classList.add("edit-save");
+  }
+
+  const title = document.querySelector(".header h1");
+  if(title) title.textContent = "점포별 월정산 수정";
+
+  showMsg("기존 정산자료를 수정하는 중입니다. 정산ID: " + EDIT_ID, "ok");
 }
 
 function applyStoreInfo(){
@@ -419,7 +510,8 @@ async function saveSettlement(){
 
   const payload = {
 
-    action:"saveSettlement",
+    action: EDIT_ID ? "updateSettlement" : "saveSettlement",
+    id: EDIT_ID,
 
     month:settlementMonth,
     periodText:settlementMonth,
@@ -561,7 +653,7 @@ async function saveSettlement(){
         encodeURIComponent(data.settlementId);
 
       showMsg(
-        "정산 저장 완료 / 최종정산액: " +
+        (EDIT_ID ? "정산 수정 완료 / 최종정산액: " : "정산 저장 완료 / 최종정산액: ") +
         money(data.paymentAmount),
         "ok"
       );
