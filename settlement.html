@@ -46,14 +46,7 @@
         <input id="region" readonly>
       </div>
 
-      <div>
-        <label>지급상태</label>
-        <select id="paymentStatus">
-          <option>미지급</option>
-          <option>지급완료</option>
-          <option>보류</option>
-        </select>
-      </div>
+      <input id="paymentStatus" type="hidden" value="미지급">
     </div>
   </div>
 
@@ -238,10 +231,7 @@
         <input id="expenseSubtotal" class="subtotal" readonly>
       </div>
 
-      <div>
-        <label>지급일</label>
-        <input id="paymentDate" type="date">
-      </div>
+      <input id="paymentDate" type="hidden" value="">
 
       <div>
         <label>지급계좌</label>
