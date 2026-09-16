@@ -6,7 +6,9 @@ const PAGES={
 let current="manage";
 const $=id=>document.getElementById(id);
 window.addEventListener("DOMContentLoaded",()=>{
- $("baseMonth").value=new Date().toISOString().slice(0,7);
+ const now=new Date();
+ const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
+ $("baseMonth").value=`${prev.getFullYear()}-${String(prev.getMonth()+1).padStart(2,"0")}`;
  $("frame").addEventListener("load",()=>{restyleChild();syncMonth();$("loading").classList.add("hide")});
  $("baseMonth").addEventListener("change",syncMonth);
  openTab(sessionStorage.getItem("settlementTab")||"manage");
@@ -33,6 +35,42 @@ function restyleChild(){
    table{background:#fff!important}
   `;
   d.head.appendChild(s);
+  if(current==="manage"){
+    // 지급상태/지급일/상태변경은 월정산 업무에서 사용하지 않음.
+    // 원본 시트/데이터 컬럼은 안전을 위해 유지하고 화면에서만 제거.
+    const textMap={"공제금액 합계":"총공제액","최종지급액":"최종정산액","정산건수":"정산건수"};
+    d.querySelectorAll("*").forEach(el=>{
+      if(el.children.length===0){
+        const t=(el.textContent||"").trim();
+        if(textMap[t]) el.textContent=textMap[t];
+      }
+    });
+
+    // 테이블 헤더명 기준으로 지급상태/지급일 열 숨김
+    const table=d.querySelector("table");
+    if(table){
+      const heads=[...table.querySelectorAll("thead th")];
+      const hideIdx=[];
+      heads.forEach((th,i)=>{
+        const t=(th.textContent||"").trim();
+        if(t.includes("지급상태")||t==="지급일") hideIdx.push(i);
+        if(t==="최종지급액") th.textContent="최종정산액";
+      });
+      hideIdx.forEach(i=>{
+        table.querySelectorAll("tr").forEach(tr=>{
+          if(tr.children[i]) tr.children[i].style.display="none";
+        });
+      });
+    }
+
+    // 상단 필터 중 지급상태 select 숨김
+    [...d.querySelectorAll("select")].forEach(sel=>{
+      const opts=[...sel.options].map(o=>(o.textContent||"").trim());
+      if(opts.some(t=>["미지급","지급완료","보류","진행중 정산"].includes(t))){
+        sel.style.display="none";
+      }
+    });
+  }
  }catch(e){console.warn(e)}
 }
 function syncMonth(){

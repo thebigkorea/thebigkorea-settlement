@@ -9,20 +9,20 @@
 <div class="app">
 <header class="top">
   <div><span class="eyebrow">THE BIG KOREA · MONTHLY SETTLEMENT</span><h1>월정산 통합관리</h1>
-  <p>정산 현황부터 입력·지급관리·월별 합산까지 하나의 업무 화면에서 처리합니다.</p></div>
+  <p>정산 현황부터 점포별 입력·정산관리·월별 합산까지 하나의 업무 화면에서 처리합니다.</p></div>
   <div class="monthbox"><label>기준월</label><input id="baseMonth" type="month"><button onclick="refreshCurrent()">↻ 새로고침</button></div>
 </header>
 
-<section class="statusbar"><b>월정산 업무</b><span>현황 확인 → 미입력 점포 정산 → 지급상태 관리 → 월별 합산 확인</span><em>● 정산 시스템 정상 연결</em></section>
+<section class="statusbar"><b>월정산 업무</b><span>현황 확인 → 미입력 점포 정산 → 정산내역 확인 → 월별 합산 확인</span><em>● 정산 시스템 정상 연결</em></section>
 
 <nav class="tabs">
-<button data-tab="manage" class="active" onclick="openTab('manage')"><i>01</i><span><b>정산 현황·관리</b><small>전체 점포 정산 및 지급상태</small></span></button>
+<button data-tab="manage" class="active" onclick="openTab('manage')"><i>01</i><span><b>정산 현황·관리</b><small>전체 점포 월정산 현황</small></span></button>
 <button data-tab="input" onclick="openTab('input')"><i>02</i><span><b>정산 입력</b><small>점포별 월정산 등록</small></span></button>
 <button data-tab="summary" onclick="openTab('summary')"><i>03</i><span><b>월별 합산</b><small>월별 전체 합계 조회</small></span></button>
 </nav>
 
 <section class="work">
- <div class="workhead"><div><h2 id="title">정산 현황·관리</h2><p id="desc">월별·점포별 정산 내역과 지급상태를 한눈에 확인합니다.</p></div></div>
+ <div class="workhead"><div><h2 id="title">정산 현황·관리</h2><p id="desc">월별·점포별 정산 내역과 최종정산액을 한눈에 확인합니다.</p></div></div>
  <div class="framebox"><div id="loading">정산 자료를 불러오는 중입니다…</div><iframe id="frame" src="settlement-admin.html"></iframe></div>
 </section>
 </div>
