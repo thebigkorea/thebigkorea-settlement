@@ -3,417 +3,214 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>점포별 정산 관리</title>
-
 <style>
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",Arial,sans-serif;
-  background:#f5efe6;
-  color:#241812;
-}
-
-.wrap{
-  width:calc(100vw - 32px);
-  max-width:none;
-  margin:0 auto;
-  padding:16px;
-}
-
-.header{
-  background:linear-gradient(135deg,#3a2517,#8b5b2b);
-  color:#fff;
-  padding:28px;
-  border-radius:24px;
-  margin-bottom:18px;
-}
-
-.header h1{
-  margin:0 0 8px;
-  font-size:32px;
-}
-
-.header p{
-  margin:0;
-  opacity:.85;
-}
-
-.filters{
-  display:grid;
-  grid-template-columns:1fr 180px;
-  gap:12px;
-  margin-bottom:16px;
-}
-
-input,select{
-  width:100%;
-  border:1px solid #d8c8b4;
-  border-radius:12px;
-  padding:10px;
-  font-size:14px;
-}
-
-.summary{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin-bottom:16px;
-}
-
-.box{
-  background:#fffaf2;
-  border:1px solid rgba(70,45,25,.14);
-  border-radius:18px;
-  padding:18px;
-}
-
-.box span{
-  display:block;
-  font-size:13px;
-  font-weight:900;
-  color:#7b6a5c;
-  margin-bottom:8px;
-}
-
-.box strong{
-  font-size:22px;
-}
-
-.table-wrap{
-  overflow:auto;
-  background:#fffaf2;
-  border:1px solid rgba(70,45,25,.14);
-  border-radius:22px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th{
-  background:#f1e7d8;
-  color:#3a2517;
-  padding:8px 6px;
-  font-size:12px;
-  text-align:center;
-  position:sticky;
-  top:0;
-}
-
-td{
-  padding:6px 5px;
-  border-top:1px solid #eadfce;
-  font-size:12px;
-  vertical-align:middle;
-  text-align:right;
-}
-
-td,
-th{
-  white-space:nowrap;
-}
-
-td.left{
-  text-align:left;
-}
-
-.status-box{
-  display:flex;
-  gap:6px;
-  align-items:center;
-}
-
-.status-box select{
-  min-width:95px;
-  padding:8px;
-}
-
-.btn{
-  display:inline-block;
-  border:0;
-  border-radius:10px;
-  padding:8px 10px;
-  font-size:12px;
-  font-weight:900;
-  cursor:pointer;
-  background:#8b5b2b;
-  color:#fff;
-  text-decoration:none;
-  text-align:center;
-  white-space:nowrap;
-}
-
-.btn.sub{
-  background:#f1e7d8;
-  color:#2b1b10;
-  border:1px solid #d8c8b4;
-}
-
-.btn.gray{
-  background:#555;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:5px 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:900;
-}
-
-.badge.wait{
-  background:#fff3cd;
-  color:#8a5a00;
-}
-
-.badge.done{
-  background:#e8f5ee;
-  color:#197857;
-}
-
-.badge.hold{
-  background:#ffe2df;
-  color:#a94438;
-}
-
-@media(max-width:900px){
-  .filters{
-    grid-template-columns:1fr;
-  }
-
-  .summary{
-    grid-template-columns:1fr;
-  }
-
-  .wrap{
-    padding:12px;
-  }
-}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",Arial,sans-serif;background:#fff;color:#172033}
+.wrap{width:100%;margin:0 auto;padding:16px}
+.filters{display:grid;grid-template-columns:1fr 180px;gap:12px;margin-bottom:16px}
+input{width:100%;border:1px solid #d9e1e8;border-radius:12px;padding:10px;font-size:14px;background:#fff}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.box{background:#fffaf2;border:1px solid #eadfce;border-radius:18px;padding:18px}
+.box span{display:block;font-size:13px;font-weight:900;color:#7b6a5c;margin-bottom:8px}
+.box strong{font-size:22px}
+.table-wrap{overflow:auto;background:#fff;border:1px solid #e3e8ed;border-radius:18px}
+table{width:100%;border-collapse:collapse}
+th{background:#f1e7d8;color:#3a2517;padding:9px 6px;font-size:12px;text-align:center;position:sticky;top:0}
+td{padding:8px 6px;border-top:1px solid #eee5d9;font-size:12px;vertical-align:middle;text-align:right}
+td,th{white-space:nowrap}
+td.left{text-align:left}
+.btn{display:inline-block;border:0;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:900;cursor:pointer;text-decoration:none;text-align:center;white-space:nowrap}
+.btn.sub{background:#f1e7d8;color:#2b1b10;border:1px solid #d8c8b4}
+.btn.gray{background:#555;color:#fff}
+.error{display:none;margin:0 0 14px;padding:12px 14px;border-radius:12px;background:#fff1f0;color:#a33;border:1px solid #ffd1cc;font-size:13px}
+@media(max-width:900px){.filters{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}.wrap{padding:12px}}
 </style>
 </head>
-
 <body>
-
 <div class="wrap">
 
-  <div class="header">
-    <h1>점포별 정산 관리</h1>
-    <p>월별·점포별 정산 내역과 최종정산액을 조회합니다.</p>
-  </div>
+  <div id="errorBox" class="error"></div>
 
   <div class="filters">
-    <input
-      id="keyword"
-      placeholder="점포명 / 브랜드 / 지역 검색"
-      onkeyup="applyFilter()">
-
-    <input
-      id="monthFilter"
-      type="month"
-      onchange="applyFilter()">
+    <input id="keyword" placeholder="점포명 / 브랜드 / 지역 검색" oninput="applyFilter()">
+    <input id="monthFilter" type="month" onchange="applyFilter()">
   </div>
 
   <div class="summary">
-    <div class="box">
-      <span>총매출</span>
-      <strong id="totalSales">0</strong>
-    </div>
-
-    <div class="box">
-      <span>총공제액</span>
-      <strong id="totalDeduction">0</strong>
-    </div>
-
-    <div class="box">
-      <span>최종정산액</span>
-      <strong id="totalPayment">0</strong>
-    </div>
-
-    <div class="box">
-      <span>정산건수</span>
-      <strong id="totalCount">0</strong>
-    </div>
+    <div class="box"><span>총매출</span><strong id="totalSales">0</strong></div>
+    <div class="box"><span>총공제액</span><strong id="totalDeduction">0</strong></div>
+    <div class="box"><span>최종정산액</span><strong id="totalPayment">0</strong></div>
+    <div class="box"><span>정산건수</span><strong id="totalCount">0</strong></div>
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>정산월</th>          
-          <th>점포명</th>
-          <th>총매출</th>
-          <th>백화점수수료</th>
-          <th>전기료 등</th>          
-          <th>본사관리비</th>
-          <th>로열티</th>          
-          <th>원재료비</th>
-          <th>경비공과금</th>
-          <th>공제합계</th>
-          <th>최종정산액</th>
-          <th>정산서</th>
+          <th>정산월</th><th>점포명</th><th>총매출</th><th>백화점수수료</th>
+          <th>전기료 등</th><th>본사관리비</th><th>로열티</th><th>원재료비</th>
+          <th>경비공과금</th><th>공제합계</th><th>최종정산액</th><th>정산서</th>
         </tr>
       </thead>
-
       <tbody id="tbody"></tbody>
     </table>
   </div>
-
 </div>
 
 <script>
-const API_URL =
-"https://script.google.com/macros/s/AKfycbwg42OHYPkw8nv1X9vbuRNntXdw5isaVfXEEBzz_ya2W9uhTDTDEh4H4EnyFf2UfScXnw/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbwg42OHYPkw8nv1X9vbuRNntXdw5isaVfXEEBzz_ya2W9uhTDTDEh4H4EnyFf2UfScXnw/exec";
+let ALL_LIST=[];
 
-let ALL_LIST = [];
+window.addEventListener("load",function(){
+  setDefaultPreviousMonth();
+  loadSettlements();
+});
 
-window.addEventListener("load", loadSettlements);
+function setDefaultPreviousMonth(){
+  const el=document.getElementById("monthFilter");
+  if(el.value) return;
+  const now=new Date();
+  const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
+  el.value=prev.getFullYear()+"-"+String(prev.getMonth()+1).padStart(2,"0");
+}
 
 async function loadSettlements(){
+  const errorBox=document.getElementById("errorBox");
+  errorBox.style.display="none";
+  errorBox.textContent="";
 
   try{
+    const url=API_URL+"?action=listSettlements&_="+Date.now();
+    const res=await fetch(url,{method:"GET",cache:"no-store",redirect:"follow"});
 
-    const res =
-      await fetch(
-        API_URL +
-        "?action=listSettlements&t=" +
-        Date.now()
-      );
+    if(!res.ok){
+      throw new Error("HTTP "+res.status+" "+res.statusText);
+    }
 
-    const data =
-      await res.json();
+    const text=await res.text();
+    let data;
+    try{
+      data=JSON.parse(text);
+    }catch(parseError){
+      throw new Error("API가 JSON이 아닌 응답을 반환했습니다: "+text.slice(0,160));
+    }
 
-    ALL_LIST =
-  data.list || [];
+    if(!data || data.success!==true || !Array.isArray(data.list)){
+      throw new Error((data && data.message) || "정산 목록 응답 형식이 올바르지 않습니다.");
+    }
 
-applyFilter();
+    ALL_LIST=data.list;
+    applyFilter();
 
   }catch(e){
-
-    alert("정산자료 조회 실패");
-
+    console.error("listSettlements error:",e);
+    ALL_LIST=[];
+    render([]);
+    errorBox.textContent="정산자료 조회 실패: "+(e && e.message ? e.message : e);
+    errorBox.style.display="block";
   }
 }
 
 function applyFilter(){
+  const keyword=document.getElementById("keyword").value.trim().toLowerCase();
+  const month=document.getElementById("monthFilter").value;
 
-  const keyword =
-    document.getElementById("keyword").value.trim();
+  let list=ALL_LIST.filter(function(item){
+    if(month && String(item.month||"").slice(0,7)!==month) return false;
 
-  const month =
-    document.getElementById("monthFilter").value;
-
-  let list = [...ALL_LIST];
-
-  if(keyword){
-    list = list.filter(item => {
-      const text = [
-        item.brand,
-        item.storeName,
-        item.market,
-        item.region,
-        item.memo
-      ].join(" ");
-      return text.indexOf(keyword) > -1;
-    });
-  }
-
-  if(month){
-    list = list.filter(item => item.month === month);
-  }
-
-  // 동일 정산월 + 동일 점포가 중복 저장된 경우 화면에는 최신 1건만 표시
-  const unique = new Map();
-  list.forEach(item => {
-    const key = (item.month || "") + "||" + (item.storeName || "");
-    unique.set(key, item);
+    if(keyword){
+      const text=[
+        item.brand,item.storeName,item.market,item.region,item.memo
+      ].join(" ").toLowerCase();
+      if(!text.includes(keyword)) return false;
+    }
+    return true;
   });
-  list = [...unique.values()];
+
+  // API는 이미 최신순(reverse)으로 내려줍니다.
+  // 따라서 동일 정산월+동일 점포 중 첫 번째(최신) 1건만 유지합니다.
+  const seen=new Set();
+  list=list.filter(function(item){
+    const key=String(item.month||"").slice(0,7)+"||"+String(item.storeName||"").trim();
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
   render(list);
 }
 
 function render(list){
-
   setSummary(list);
-
-  const tbody =
-    document.getElementById("tbody");
+  const tbody=document.getElementById("tbody");
 
   if(!list.length){
-    tbody.innerHTML =
-      `<tr>
-        <td colspan="12" style="text-align:center;padding:40px;">
-          정산자료가 없습니다.
-        </td>
-      </tr>`;
+    tbody.innerHTML='<tr><td colspan="12" style="text-align:center;padding:40px;">정산자료가 없습니다.</td></tr>';
     return;
   }
 
-  tbody.innerHTML =
-    list.map(item => {
-      return `
+  tbody.innerHTML=list.map(function(item){
+    return `
       <tr>
-        <td class="left">${item.month || ""}</td>
-
-        <td class="left">
-          <strong>${safe(item.storeName)}</strong>
-        </td>
-
+        <td class="left">${safe(item.month)}</td>
+        <td class="left"><strong>${safe(item.storeName)}</strong></td>
         <td>${money(item.sales)}</td>
         <td>${money(item.commissionAmount)}</td>
         <td>${money(item.utilityCost)}</td>
         <td>${money(item.hqFeeAmount)}</td>
         <td>${money(item.royaltyAmount)}</td>
-
         <td><strong>${money(item.foodSubtotal)}</strong></td>
         <td><strong>${money(item.expenseSubtotal)}</strong></td>
         <td><strong>${money(item.totalDeduction)}</strong></td>
         <td><strong>${money(item.paymentAmount)}</strong></td>
-
         <td class="left">
-          <a class="btn sub"
-             href="settlement-print.html?id=${encodeURIComponent(item.id)}"
-             target="_blank">정산서</a>
-
-          <button class="btn gray"
-                  onclick="copyPrintLink('${item.id}')">링크복사</button>
+          <a class="btn sub" href="settlement-print.html?id=${encodeURIComponent(item.id||"")}" target="_blank">정산서</a>
+          <button class="btn gray" type="button" onclick='copyPrintLink(${JSON.stringify(String(item.id||""))})'>링크복사</button>
         </td>
-      </tr>
-      `;
-    }).join("");
+      </tr>`;
+  }).join("");
 }
 
+function setSummary(list){
+  let sales=0,deduction=0,payment=0;
+  list.forEach(function(item){
+    sales+=toNumber(item.sales);
+    deduction+=toNumber(item.totalDeduction);
+    payment+=toNumber(item.paymentAmount);
+  });
+  document.getElementById("totalSales").textContent=money(sales);
+  document.getElementById("totalDeduction").textContent=money(deduction);
+  document.getElementById("totalPayment").textContent=money(payment);
+  document.getElementById("totalCount").textContent=list.length.toLocaleString("ko-KR");
+}
+
+function toNumber(value){
+  if(typeof value==="number") return Number.isFinite(value)?value:0;
+  return Number(String(value||"0").replace(/,/g,"").replace(/[^0-9.-]/g,""))||0;
+}
 
 function money(value){
-  return Math.round(
-    Number(value || 0)
-  ).toLocaleString("ko-KR");
+  return Math.round(toNumber(value)).toLocaleString("ko-KR");
 }
 
 function safe(value){
-  return String(value || "")
+  return String(value||"")
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
 function copyPrintLink(id){
-
-  const url =
-    "https://thebigkorea.github.io/thebigkorea-settlement/settlement-print.html?id=" +
-    encodeURIComponent(id);
-
+  const url="https://thebigkorea.github.io/thebigkorea-settlement/settlement-print.html?id="+encodeURIComponent(id);
   navigator.clipboard.writeText(url).then(function(){
     alert("정산서 링크가 복사되었습니다.");
+  }).catch(function(){
+    window.prompt("아래 링크를 복사하세요.",url);
   });
 }
 </script>
-
 </body>
 </html>
