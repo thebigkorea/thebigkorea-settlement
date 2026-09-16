@@ -53,7 +53,21 @@ async function loadStores(){
     select.innerHTML =
       `<option value="">점포를 선택하세요</option>`;
 
+    // 브랜드(상호)별 그룹으로 표시하고, 그룹 안에서는 점포명 가나다순
+    let currentBrand = "";
+    let group = null;
+
     STORE_LIST.forEach(function(store,index){
+
+      const brand =
+        String(store.brand || "기타").trim() || "기타";
+
+      if(brand !== currentBrand){
+        group = document.createElement("optgroup");
+        group.label = brand;
+        select.appendChild(group);
+        currentBrand = brand;
+      }
 
       const opt =
         document.createElement("option");
@@ -61,9 +75,10 @@ async function loadStores(){
       opt.value = index;
 
       opt.textContent =
-        store.storeName + " / " + store.market;
+        store.storeName +
+        (store.market ? " / " + store.market : "");
 
-      select.appendChild(opt);
+      group.appendChild(opt);
 
     });
 
