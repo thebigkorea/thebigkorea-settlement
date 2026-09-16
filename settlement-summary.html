@@ -2,71 +2,48 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>월별 정산 합산조회</title>
 <link rel="stylesheet" href="settlement-summary.css">
 </head>
-
 <body>
 <div class="wrap">
+  <div class="header"><h1>월별 정산 합산조회</h1><p>월별 정산 합계를 조회합니다.</p></div>
 
-  <div class="header">
-    <h1>월별 정산 합산조회</h1>
-    <p>각 월별 백화점수수료, 본사관리비, 로열티, 원재료비, 경비, 최종지급액을 합산 조회합니다.</p>
-  </div>
-
-  <div class="card">
+  <section class="filter-card">
+    <div class="filter-title">
+      <div><strong>조회기간</strong><span>월별 정산 실적을 기간별로 확인합니다.</span></div>
+    </div>
     <div class="search-row">
-      <div>
-        <label>조회 시작월</label>
-        <input id="startMonth" type="month">
-      </div>
-
-      <div>
-        <label>조회 종료월</label>
-        <input id="endMonth" type="month">
-      </div>
-
+      <div><label>조회 시작월</label><input id="startMonth" type="month"></div>
+      <div><label>조회 종료월</label><input id="endMonth" type="month"></div>
       <button onclick="loadMonthlySummary()">조회하기</button>
     </div>
-  </div>
+  </section>
 
-  <div class="card">
-    <h2>월별 합산내역</h2>
+  <section class="summary-cards">
+    <div class="metric"><span>총매출</span><strong id="grandSales">0</strong></div>
+    <div class="metric"><span>총공제액</span><strong id="grandDeduction">0</strong></div>
+    <div class="metric accent"><span>최종정산액</span><strong id="grandPayment">0</strong></div>
+    <div class="metric"><span>조회월수</span><strong id="grandCount">0</strong></div>
+  </section>
 
+  <section class="table-card">
+    <div class="table-title"><h2>월별 합산내역</h2><span>금액 단위: 원</span></div>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>정산월</th>
-            <th>총매출</th>
-            <th>백화점수수료</th>
-            <th>본사관리비</th>
-            <th>국가유산진흥원 로열티</th>
-            <th>본사청구/대행구매</th>
-            <th>MAC매입</th>
-            <th>롯데칠성매입</th>
-            <th>CJ매입</th>
-            <th>기타원재료</th>
-            <th>원재료비</th>
-            <th>경비/공과금</th>
-            <th>공제합계</th>
-            <th>최종지급액</th>
-         </tr>
-        </thead>
-        <tbody id="summaryBody">
-          <tr>
-            <td colspan="14">조회된 자료가 없습니다.</td>
-          </tr>
-        </tbody>
+        <thead><tr>
+          <th>정산월</th><th>총매출</th><th>백화점수수료</th><th>본사관리비</th>
+          <th>로열티</th><th>본사청구/대행구매</th><th>MAC매입</th><th>롯데칠성매입</th>
+          <th>CJ매입</th><th>기타원재료</th><th>원재료비</th><th>경비/공과금</th>
+          <th>총공제액</th><th>최종정산액</th>
+        </tr></thead>
+        <tbody id="summaryBody"><tr><td colspan="14" class="empty">조회된 자료가 없습니다.</td></tr></tbody>
       </table>
     </div>
-  </div>
-
+  </section>
   <div id="msg" class="msg"></div>
-
 </div>
-
 <script src="settlement-summary.js"></script>
 </body>
 </html>
