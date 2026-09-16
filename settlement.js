@@ -11,8 +11,9 @@ window.addEventListener("load", function(){
 
 function setDefaultMonth(){
   const d = new Date();
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const prev = new Date(d.getFullYear(), d.getMonth() - 1, 1);
+  const yyyy = prev.getFullYear();
+  const mm = String(prev.getMonth() + 1).padStart(2, "0");
 
   document.getElementById("month").value =
     yyyy + "-" + mm;
@@ -560,7 +561,7 @@ async function saveSettlement(){
         encodeURIComponent(data.settlementId);
 
       showMsg(
-        "정산 저장 완료 / 최종지급액: " +
+        "정산 저장 완료 / 최종정산액: " +
         money(data.paymentAmount),
         "ok"
       );
