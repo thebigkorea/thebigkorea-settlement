@@ -35,6 +35,18 @@ async function loadStores(){
 
     STORE_LIST = data.stores || [];
 
+    // 브랜드(상호) 그룹별 정렬 후, 같은 브랜드 안에서는 점포명 가나다순
+    STORE_LIST.sort(function(a,b){
+      const brandCompare = String(a.brand || "").trim().localeCompare(
+        String(b.brand || "").trim(), "ko"
+      );
+      if(brandCompare !== 0) return brandCompare;
+
+      return String(a.storeName || "").trim().localeCompare(
+        String(b.storeName || "").trim(), "ko"
+      );
+    });
+
     const select =
       document.getElementById("storeSelect");
 
