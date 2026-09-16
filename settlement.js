@@ -80,6 +80,11 @@ function applyStoreInfo(){
   const isTheBigSoba =
     storeName.includes("더큰식탁과 소바공방");
 
+  // 길채정 AK플라자 분당점
+  const isBundangAK =
+    storeName.includes("길채정") &&
+    (storeName.includes("분당") || String(store.market || "").includes("AK"));
+
   const isShinsegaeSoba =
     storeName.includes("소바공방 시흥신세계프리미엄아울렛점");
 
@@ -151,6 +156,14 @@ document.getElementById("commissionAmount").readOnly =
 
   }
 
+  // 길채정 AK플라자 분당점 전용 정산기준
+  // 백화점수수료 19%, 본사관리비 3% 고정, 로열티 없음
+  if(isBundangAK){
+    document.getElementById("commissionRate").value = "19";
+    document.getElementById("hqFeeRate").value = "3";
+    document.getElementById("royaltyRate").value = "";
+  }
+
   calculate();
 }
 
@@ -174,6 +187,10 @@ function calculate(){
 
   const isTheBigSoba =
     storeName.includes("더큰식탁과 소바공방");
+
+  const isBundangAK =
+    storeName.includes("길채정") &&
+    (storeName.includes("분당") || (store && String(store.market || "").includes("AK")));
 
   const isShinsegaeSoba =
     storeName.includes("소바공방 시흥신세계프리미엄아울렛점");
@@ -265,6 +282,14 @@ const isShinsegaeManual =
 
     hqFeeAmount = 400000;
 
+  }else if(isBundangAK){
+
+    // AK분당 정산서 수식: ROUNDUP(매출 × 3%, -1)
+    hqFeeAmount =
+      roundup10(
+        sales * 0.03
+      );
+
   }else{
 
     hqFeeAmount =
@@ -275,9 +300,11 @@ const isShinsegaeManual =
   }
 
   const royaltyAmount =
-    roundup10(
-      sales * rate("royaltyRate")
-    );
+    isBundangAK
+      ? 0
+      : roundup10(
+          sales * rate("royaltyRate")
+        );
 
   const royaltySubtotal =
     hqFeeAmount + royaltyAmount;
